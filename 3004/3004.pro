@@ -10,12 +10,16 @@ CONFIG += c++11
 
 SOURCES += \
     device.cpp \
+    electrode.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    session.cpp
 
 HEADERS += \
     device.h \
-    mainwindow.h
+    electrode.h \
+    mainwindow.h \
+    session.h
 
 FORMS += \
     mainwindow.ui
