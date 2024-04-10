@@ -21,13 +21,8 @@ public:
     //reset function that will get called after session is done, just brings back device state to beginning (main menu)
     void Reset();
 
-    //active the lights
-    void RedLight();
-    void BlueLight();
-    void GreenLight();
-
     //menu options
-    void NewSession();
+    void NewSession(QDateTime const &dateTime);
     void SessionLogs();
 
     //pc screen
@@ -42,9 +37,14 @@ private:
     bool charging;
     bool auxPlug;
     int testLogs[10];
-    Device eeg;
+    Device *device;
 
-private slots:
+public slots:
+    //active the lights
+    void RedLight();
+    void BlueLight();
+    void GreenLight();
+
     //power and charge
     void Power();
     void Charge();

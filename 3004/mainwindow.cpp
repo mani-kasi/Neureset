@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    Device eeg;
+    Device *device = new Device();
     //device on by default
     power = true;
 
@@ -31,9 +31,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->downButton, &QPushButton::clicked, this, &MainWindow::MenuDown);
     connect(ui->selectButton, &QPushButton::clicked, this, &MainWindow::MenuEnter);
 
-    connect(eeg, SIGNAL(sendBlueLightSignal()), this, &MainWindow::BlueLight);
-    connect(eeg, SIGNAL(sendGreenLightSignal()), this, &MainWindow::GreenLight);
-    connect(eeg, SIGNAL(sendRedLightSignal()), this, &MainWindow::RedLight);
+    connect(device, SIGNAL(sendBlueLightSignal()), this, SLOT (BlueLight()));
+    connect(device, SIGNAL(sendGreenLightSignal()), this, SLOT (GreenLight()));
+    connect(device, SIGNAL(sendRedLightSignal()), this, SLOT (RedLight()));
 
     connect(ui->timeEdit, &QTimeEdit::timeChanged, this, &MainWindow::onTimeChanged);
     connect(ui->dateEdit, &QDateEdit::dateChanged, this, &MainWindow::onDateChanged);
@@ -118,8 +118,8 @@ void MainWindow::GreenLight(){
 
 //MENU OPTION FUNCTIONS
 //starts a new session, pass in current date.
-void MainWindow::NewSession(){
-    //eeg.Main()
+void MainWindow::NewSession(QDateTime const &dateTime){
+    device->newSession(dateTime);
 }
 
 
@@ -150,20 +150,19 @@ void MainWindow::Power()
     // check if device is on or off, sends accordingly
     if(power == true){
         ui->stackedWidget->setCurrentWidget(ui->page_3);
-        //eeg.Power(False)
+        device->power(false);
         power = false;
     }
     else if( battery <= 0){
         ui->stackedWidget->setCurrentWidget(ui->page_3);
-        //eeg.Power(False)
+        device->power(false);
         power = false;
     }
     else{
         ui->stackedWidget->setCurrentWidget(ui->page);
-        //eeg.Power(True)
+        device->power(true);
         power = true;
     }
-
 
 }
 
@@ -171,7 +170,6 @@ void MainWindow::Power()
 void MainWindow::Charge()
 {
     //if statement check weather or not it plugged in, does charge function accordingly
-    //eeg.BatteryCharge()
     if(charging){
         charging = false;
     }
@@ -215,21 +213,22 @@ void MainWindow::Start()
 {
     //disable start button til session is done?
     //enable pause button if its disable
-    NewSession();
+    //passes the current date time to new session
+    NewSession(ui->dateTimeEdit->dateTime());
 }
 
 //Pause Button:
 void MainWindow::Pause()
 {
     //disable pause button til session is unpaused
-    //eeg.PauseSession()
+    device->pauseSession();
 }
 
 //Stop Button:
 void MainWindow::Stop()
 {
     //enable start button and pause button if one was disable
-    //eeg.stopSession()
+    //device->stopSession();
 }
 
 //menu list button:
