@@ -4,9 +4,7 @@ Device::Device(QObject *parent)
     : QObject{parent}
 {
     //Connect QTimer decrement function
-    connect(pauseTimer, &QTimer::timeout, this, SLOT (decrementTime()));
-    charging = false;
-    battery = 100;
+    //connect(pauseTimer, &QTimer::timeout, this, SLOT (decrementTime()));
     //There is an int dateTime, not sure how to format that
     numSessions = 0;
     pauseTimer = new QTimer();
@@ -23,7 +21,7 @@ Device::~Device() {
     }
 }
 
-void Device::newSession() {
+void Device::newSession(QDateTime const &dateTime) {
     if (numSessions+1 == MAX_SESSIONS) {
         return;
     }
@@ -32,14 +30,14 @@ void Device::newSession() {
         electrodes[i] = new Electrode();
     }
 
-    curSession = new Session();
+    //curSession = new Session();
 
-    sendBlueLightSignal();
+    emit sendBlueLightSignal();
 
     calculateOverallBaseline();
 
     for (int i = 0; i < NUM_ELECTRODES; i++) {
-        sendGreenLightSignal();
+        emit sendGreenLightSignal();
         //electrodes[i]->treatment()
         //if paused then
 
@@ -58,7 +56,7 @@ void Device::decrementTime() {
 
 void Device::pauseSession() {
     pauseTimer->start(1000);
-    sendRedLightSignal();
+    emit sendRedLightSignal();
     //set state to paused
 }
 
@@ -66,17 +64,15 @@ void Device::resumeSession() {
     if (pauseTimer->isActive()) {
         pauseTimer->stop();
     }
-    sendBlueLightSignal();
+    emit sendBlueLightSignal();
 }
 
 void Device::power(bool on) {
     if (on) {
-        currentlyOn = true;
         //This is five minutes in seconds
         contactTimer = 300;
     }
     else {
-        currentlyOn = false;
         for (int i = 0; i < NUM_ELECTRODES; i++) {
             delete electrodes[i];
         }
@@ -86,4 +82,17 @@ void Device::power(bool on) {
 
 void Device::saveSession() {
     sessions[numSessions++] = curSession;
+}
+
+void Device::stopSession() {
+    delete curSession;
+    //Stop flow of program
+}
+
+void Device::calculateOverallBaseline() {
+
+}
+
+void Device::calculateBaseline(int site) {
+
 }

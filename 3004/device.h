@@ -14,12 +14,14 @@ class Device : public QObject
 public:
     explicit Device(QObject *parent = nullptr);
     ~Device();
-    void newSession();
+    void newSession(QDateTime const &dateTime);
     void power(bool on);
     void calculateOverallBaseline();
     void calculateBaseline(int site);
     void saveSession();
-    void batteryCharge();
+    void pauseSession();
+    void resumeSession();
+    void stopSession();
 
 private:
     Session* sessions[MAX_SESSIONS];
@@ -27,17 +29,13 @@ private:
     Electrode* electrodes[NUM_ELECTRODES];
     int beforeBaseline;
     int afterBaseline;
-    bool charging;
-    int battery;
     int dateTime;
     int contactTimer;
     int numSessions;
     QTimer* pauseTimer;
-    bool currentlyOn;
 
 private slots:
-    void pauseSession();
-    void resumeSession();
+
     void decrementTime();
 
 signals:
