@@ -28,6 +28,10 @@ void Device::newSession() {
         return;
     }
 
+    for (int i = 0; i < NUM_ELECTRODES; i++) {
+        electrodes[i] = new Electrode();
+    }
+
     curSession = new Session();
 
     sendBlueLightSignal();
@@ -73,6 +77,9 @@ void Device::power(bool on) {
     }
     else {
         currentlyOn = false;
+        for (int i = 0; i < NUM_ELECTRODES; i++) {
+            delete electrodes[i];
+        }
         //Somehow stop flow of program
     }
 }
