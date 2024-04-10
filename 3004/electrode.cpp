@@ -47,10 +47,11 @@ void Electrode::generateBaselineData() {
 }
 
 void Electrode::applyTreatment() {
+    qInfo("Applying treatment");
+
     int numSamples = TREATMENT_DURATION * SAMPLE_RATE;
     treatmentData = baselineData.mid(0, numSamples);
 
-    for (int round = 0; round < 4; ++round) {
     for (int start = 0; start < numSamples; start += TREATMENT_INTERVAL) {
         int end = std::min(start + TREATMENT_INTERVAL, numSamples);
         double modulatedFrequency = dominantFrequency + OFFSET_FREQUENCY;
@@ -62,8 +63,9 @@ void Electrode::applyTreatment() {
 
         // Update the dominant frequency for the next interval
         dominantFrequency = calculateDominantFrequency();
+
     }
-}
+
 }
 
 QVector<double> Electrode::getBaselineData() const {

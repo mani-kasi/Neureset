@@ -5,6 +5,8 @@
 #include <session.h>
 #include <electrode.h>
 #include <QTimer>
+#include <QVector>
+#include <QEventLoop>
 #define MAX_SESSIONS 30
 #define NUM_ELECTRODES 21
 
@@ -16,17 +18,16 @@ public:
     ~Device();
     void newSession(QDateTime const &dateTime);
     void power(bool on);
-    void calculateOverallBaseline();
-    void calculateBaseline(int site);
     void saveSession();
     void pauseSession();
     void resumeSession();
     void stopSession();
+    void delay(int);
 
 private:
     Session* sessions[MAX_SESSIONS];
     Session* curSession;
-    Electrode* electrodes[NUM_ELECTRODES];
+    QVector<Electrode*> electrodes;
     int beforeBaseline;
     int afterBaseline;
     int dateTime;
@@ -42,6 +43,7 @@ signals:
     void sendBlueLightSignal();
     void sendRedLightSignal();
     void sendGreenLightSignal();
+    void sendProgress();
 };
 
 #endif // DEVICE_H

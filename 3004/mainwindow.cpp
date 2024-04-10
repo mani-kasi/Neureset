@@ -119,6 +119,7 @@ void MainWindow::GreenLight(){
 //MENU OPTION FUNCTIONS
 //starts a new session, pass in current date.
 void MainWindow::NewSession(QDateTime const &dateTime){
+    qInfo("main  winndow new session called");
     device->newSession(dateTime);
 }
 

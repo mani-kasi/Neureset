@@ -3,11 +3,12 @@
 Device::Device(QObject *parent)
     : QObject{parent}
 {
-    //Connect QTimer decrement function
-    //connect(pauseTimer, &QTimer::timeout, this, SLOT (decrementTime()));
-    //There is an int dateTime, not sure how to format that
-    numSessions = 0;
     pauseTimer = new QTimer();
+
+    //Connect QTimer decrement function
+    connect(pauseTimer, &QTimer::timeout, this, &Device::decrementTime);
+
+    numSessions = 0;
     power(true);
 }
 
@@ -22,29 +23,58 @@ Device::~Device() {
 }
 
 void Device::newSession(QDateTime const &dateTime) {
+    qInfo("device new session function just called");
+
     if (numSessions+1 == MAX_SESSIONS) {
         return;
     }
 
     for (int i = 0; i < NUM_ELECTRODES; i++) {
-        electrodes[i] = new Electrode();
+        electrodes.append(new Electrode());
+        qInfo("1");
     }
 
-    //curSession = new Session();
+    curSession = new Session(nullptr, dateTime, electrodes);
+    qInfo("2");
 
     emit sendBlueLightSignal();
+    qInfo("3");
 
-    calculateOverallBaseline();
 
-    for (int i = 0; i < NUM_ELECTRODES; i++) {
+    //Need baseline at start of session
+    curSession->startSession();
+    qInfo("4");
+
+    emit sendProgress();
+    delay(5000);
+
+
+    //Treatment on each electrode
+    for (int i = 0; i < NUM_ELECTRODES; i++) {   
         emit sendGreenLightSignal();
-        //electrodes[i]->treatment()
-        //if paused then
+        emit sendProgress();
+        electrodes[i]->applyTreatment();
+        delay(1000);
 
+        //if paused then something needs to happen
     }
-    calculateOverallBaseline();
+
+    //Need baseline at end of session
+    curSession->setOverallBaselineEnd();
+    emit sendProgress();
+    delay(5000);
+
     saveSession();
     curSession = NULL;
+}
+
+void Device::delay(int millisecondsWait)
+{
+    QEventLoop loop;
+    QTimer t;
+    t.connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
+    t.start(millisecondsWait);
+    loop.exec();
 }
 
 void Device::decrementTime() {
@@ -89,10 +119,3 @@ void Device::stopSession() {
     //Stop flow of program
 }
 
-void Device::calculateOverallBaseline() {
-
-}
-
-void Device::calculateBaseline(int site) {
-
-}

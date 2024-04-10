@@ -10,8 +10,14 @@ Session::Session(QObject *parent, const QDateTime& startTime,  QVector<Electrode
 }
 
 void Session::startSession(){
+    qInfo("Session started");
     running = true;
-    overallBaselineStart = calcOverallBaselineStart();
+    overallBaselineStart = calcOverallBaseline();
+}
+
+void Session::setOverallBaselineEnd(){
+    qInfo("Session end baseline calculated");
+    overallBaselineEnd = calcOverallBaseline();
 }
 
 void Session::pauseSession(){
@@ -58,7 +64,7 @@ double Session::getOverallBaselineEnd() const{
 double Session::getSessionProgress() const{
     return sessionProgress;
 }
-double Session::calcOverallBaselineStart(){
+double Session::calcOverallBaseline(){
 
 
     double tempSum = 0;
