@@ -1,5 +1,6 @@
 #include "electrode.h"
 #include <chrono>
+
 Electrode::Electrode()
     : dominantFrequency(0.0), f1(0.0), A1(0.0), f2(0.0), A2(0.0), f3(0.0), A3(0.0), f4(0.0), A4(0.0) {}
 

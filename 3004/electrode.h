@@ -1,6 +1,5 @@
 #ifndef ELECTRODE_H
 #define ELECTRODE_H
-
 #include <QVector>
 #include <cmath>
 #include <random>
@@ -35,6 +34,7 @@ private:
     const double OFFSET_FREQUENCY = 5.0;
 
     double f1, A1, f2, A2, f3, A3, f4, A4;
+
 };
 
 #endif // ELECTRODE_H
