@@ -10,10 +10,14 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    qcustomplot.cpp
+    qcustomplot.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    qcustomplot.h
+    qcustomplot.h
 
 FORMS += \
     mainwindow.ui
@@ -22,3 +26,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resources.qrc

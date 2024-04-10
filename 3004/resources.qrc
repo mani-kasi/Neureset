@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>power.png</file>
+        <file>down.png</file>
+        <file>up.png</file>
+        <file>enter.png</file>
+        <file>menu.png</file>
+        <file>pause.png</file>
+        <file>play.png</file>
+        <file>stop.png</file>
+        <file>charger.png</file>
+        <file>pc.png</file>
+        <file>battery.png</file>
+        <file>auxcord.png</file>
+        <file>aux1.png</file>
+        <file>test.png</file>
+    </qresource>
+</RCC>
