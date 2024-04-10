@@ -6,8 +6,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    // , device()
 {
+    Device eeg;
     //device on by default
     power = true;
 
@@ -30,10 +30,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->downButton, &QPushButton::clicked, this, &MainWindow::MenuDown);
     connect(ui->selectButton, &QPushButton::clicked, this, &MainWindow::MenuEnter);
 
+    connect(eeg, SIGNAL(sendBlueLightSignal()), this, &MainWindow::BlueLight);
+    connect(eeg, SIGNAL(sendGreenLightSignal()), this, &MainWindow::GreenLight);
+    connect(eeg, SIGNAL(sendRedLightSignal()), this, &MainWindow::RedLight);
+
     connect(ui->timeEdit, &QTimeEdit::timeChanged, this, &MainWindow::onTimeChanged);
     connect(ui->dateEdit, &QDateEdit::dateChanged, this, &MainWindow::onDateChanged);
-
-    connect(ui->testButton, &QPushButton::clicked, this, &MainWindow::Lights);
 
     //init the menu labels (options) to access them easier
     menuLabels[0] = ui->newSessionLabel;
@@ -140,16 +142,6 @@ void MainWindow::PCScreen(int sessionExample){
 
 
 //SLOTS:
-
-//test functions:
-void MainWindow::Lights()
-{
-    RedLight();
-    BlueLight();
-    GreenLight();
-}
-
-
 
 //Power Button, switches stacked screen to black to show device is turned off, tells device to turn off
 void MainWindow::Power()

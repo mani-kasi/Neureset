@@ -2,10 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-//#include "Device.h"
+#include "device.h"
 #include <QLabel>
 #include <QStringListModel>
-#include
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -43,7 +42,7 @@ private:
     bool charging;
     bool auxPlug;
     int testLogs[10];
-    //Device eeg;
+    Device eeg;
 
 private slots:
     //power and charge
@@ -66,10 +65,6 @@ private slots:
     //date and time:
     void onTimeChanged(const QTime &time);
     void onDateChanged(const QDate &date);
-
-
-    //test functions
-    void Lights();
 
 };
 #endif // MAINWINDOW_H
