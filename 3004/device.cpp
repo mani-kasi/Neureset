@@ -27,7 +27,6 @@ void Device::newSession() {
     if (numSessions+1 == MAX_SESSIONS) {
         return;
     }
-    state = CONTACT;
 
     curSession = new Session();
 
@@ -35,18 +34,15 @@ void Device::newSession() {
 
     calculateOverallBaseline();
 
-    state = TREATMENT;
     for (int i = 0; i < NUM_ELECTRODES; i++) {
         sendGreenLightSignal();
         //electrodes[i]->treatment()
+        //if paused then
 
     }
     calculateOverallBaseline();
     saveSession();
-}
-
-void Device::changeSession(Session* session) {
-
+    curSession = NULL;
 }
 
 void Device::decrementTime() {
@@ -59,6 +55,7 @@ void Device::decrementTime() {
 void Device::pauseSession() {
     pauseTimer->start(1000);
     sendRedLightSignal();
+    //set state to paused
 }
 
 void Device::resumeSession() {
@@ -70,11 +67,16 @@ void Device::resumeSession() {
 
 void Device::power(bool on) {
     if (on) {
-        state = STARTUP;
+        currentlyOn = true;
         //This is five minutes in seconds
         contactTimer = 300;
     }
     else {
+        currentlyOn = false;
         //Somehow stop flow of program
     }
+}
+
+void Device::saveSession() {
+    sessions[numSessions++] = curSession;
 }

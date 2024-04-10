@@ -8,10 +8,6 @@
 #define MAX_SESSIONS 30
 #define NUM_ELECTRODES 21
 
-enum State {
-    STARTUP, CONTACT, TREATMENT, LOST_CONTACT
-};
-
 class Device : public QObject
 {
     Q_OBJECT
@@ -19,7 +15,6 @@ public:
     explicit Device(QObject *parent = nullptr);
     ~Device();
     void newSession();
-    void changeSession(Session* session);
     void power(bool on);
     void calculateOverallBaseline();
     void calculateBaseline(int site);
@@ -32,13 +27,13 @@ private:
     Electrode* electrodes[NUM_ELECTRODES];
     int beforeBaseline;
     int afterBaseline;
-    State state;
     bool charging;
     int battery;
     int dateTime;
     int contactTimer;
     int numSessions;
     QTimer* pauseTimer;
+    bool currentlyOn;
 
 private slots:
     void pauseSession();
