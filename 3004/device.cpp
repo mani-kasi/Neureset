@@ -10,6 +10,8 @@ Device::Device(QObject *parent)
 
     numSessions = 0;
     power(true);
+    //QVector<int> testvec;
+    electrodes = new Electrode*[NUM_ELECTRODES];
 }
 
 Device::~Device() {
@@ -28,9 +30,11 @@ void Device::newSession(QDateTime const &dateTime) {
     if (numSessions+1 == MAX_SESSIONS) {
         return;
     }
-
+    //testarr[0]=5;
     for (int i = 0; i < NUM_ELECTRODES; i++) {
-        electrodes.append(new Electrode());
+        Electrode* test = new Electrode();
+        qInfo("0");
+        electrodes[i] = new Electrode();
         qInfo("1");
     }
 

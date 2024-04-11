@@ -8,11 +8,15 @@
 #include "electrode.h"
 using namespace std;
 
+
+#define NUM_ELECTRODES 21
+#define PAUSE_TIMEOUT 300
+
 class Session : public QObject {
     Q_OBJECT
 
 public:
-    Session(QObject* parent, const QDateTime&, QVector<Electrode*> );
+    Session(QObject* parent, const QDateTime&, Electrode** );
 
     void setStartTime(const QDateTime&);
     void setEndTime(const QDateTime&);
@@ -53,7 +57,7 @@ private slots:
     void onPauseTimeout();
 
 private:
-    QVector<Electrode*> electrodes;
+    Electrode** electrodes;
     bool running = false;
     bool paused = false;
     QDateTime startTime;
@@ -61,8 +65,7 @@ private:
     double overallBaselineStart;
     double overallBaselineEnd;
     double sessionProgress=0;
-    const int NUM_ELECTRODES = 21;
-    const int PAUSE_TIMEOUT = 300; // 5 minutes in seconds
+
 };
 
 #endif // SESSION_H
