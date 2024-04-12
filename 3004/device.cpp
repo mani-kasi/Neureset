@@ -10,6 +10,7 @@ Device::Device(QObject *parent)
 
     numSessions = 0;
     power(true);
+
 }
 
 Device::~Device() {
@@ -41,8 +42,6 @@ void Device::newSession(QDateTime const &dateTime) {
 
     //Need baseline at start of session
     curSession->startSession();
-
-    emit sendProgress();
     delay(5000);
 
 
@@ -50,7 +49,7 @@ void Device::newSession(QDateTime const &dateTime) {
     for (int i = 0; i < NUM_ELECTRODES; i++) {   
         emit sendGreenLightSignal();
         emit sendProgress();
-        qInfo("Applying treatment for electrode %d:",i);
+        qInfo("Applying treatment for electrode %d:",i+1);
         electrodes[i]->applyTreatment();
         electrodes[i]->applyTreatment();
         electrodes[i]->applyTreatment();
@@ -62,11 +61,17 @@ void Device::newSession(QDateTime const &dateTime) {
 
     //Need baseline at end of session
     curSession->setOverallBaselineEnd();
-    emit sendProgress();
     delay(5000);
-
+    //we need to figure out a way to get the updated time from mainwindow
+    curSession->setEndTime(dateTime);
     saveSession();
     curSession = NULL;
+    emit updateSessionLogs();
+    qInfo("sent sessionLogs signal");
+    emit sendBlueLightSignal();
+    emit sendGreenLightSignal();
+    qInfo("PROGRESS IS DONE");
+    emit progressDone();
 }
 
 void Device::delay(int millisecondsWait)
@@ -86,12 +91,14 @@ void Device::decrementTime() {
 }
 
 void Device::pauseSession() {
+    qInfo("pauseSESSION WAS CALLED");
     pauseTimer->start(1000);
     emit sendRedLightSignal();
     //set state to paused
 }
 
 void Device::resumeSession() {
+    qInfo("resume SESSION WAS CALLED");
     if (pauseTimer->isActive()) {
         pauseTimer->stop();
     }
@@ -120,3 +127,11 @@ void Device::stopSession() {
     //Stop flow of program
 }
 
+//get for the mainwindow
+Session** Device::getSessions() {
+    return sessions;
+}
+
+int Device::getNumSessions(){
+    return numSessions;
+}

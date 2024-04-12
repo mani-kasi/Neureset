@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent)
     battery = 100;
     charging = false;
     auxPlug = true;
+    timer = 29;
+    progressValue = 0;
 
     //connect all the slots
     ui->setupUi(this);
@@ -35,6 +37,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(device, SIGNAL(sendBlueLightSignal()), this, SLOT (BlueLight()));
     connect(device, SIGNAL(sendGreenLightSignal()), this, SLOT (GreenLight()));
     connect(device, SIGNAL(sendRedLightSignal()), this, SLOT (RedLight()));
+    connect(device, SIGNAL(updateSessionLogs()), this, SLOT (SessionLogs()));
+    connect(device, SIGNAL(sendProgress()), this, SLOT (updateProgress()));
+    connect(device, SIGNAL(progressDone()), this, SLOT (progressComplete()));
+
 
     connect(ui->timeEdit, &QTimeEdit::timeChanged, this, &MainWindow::onTimeChanged);
     connect(ui->dateEdit, &QDateEdit::dateChanged, this, &MainWindow::onDateChanged);
@@ -45,24 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     menuLabels[2] = ui->dateLabel;
     menuLabels[3] = ui->testLabel;
 
-    //for testing the logs view on the screen
-    for(int i = 0; i < 10; i ++){
-        testLogs[i] = i;
-    }
 
-    //this will load the logs on the listView, but we wouldnt need this cuz there will be no logs when the we run the code
-    QStringList stringList;
-    for(int i = 0; i < 10; ++i){
-        stringList << QString::number(testLogs[i]);
-    }
-
-    QStringListModel *model = new QStringListModel(stringList, this);
-    ui->listView->setModel(model);
-
-
-    //testing progress bar for session view screen:
-    ui->progressBar->setValue(85);
-    //this will be done from device when running the session, and updated appropriately, along with the timer.
 }
 
 
@@ -120,21 +109,58 @@ void MainWindow::GreenLight(){
 //MENU OPTION FUNCTIONS
 //starts a new session, pass in current date.
 void MainWindow::NewSession(QDateTime const &dateTime){
-    qInfo("main  winndow new session called");
+    ui->stackedWidget->setCurrentWidget(ui->page_2);
+
+        ui->upButton->setEnabled(false);
+        ui->downButton->setEnabled(false);
+        ui->selectButton->setEnabled(false);
+        ui->playButton->setEnabled(false);
+        ui->menuButton->setEnabled(false);
+
     device->newSession(dateTime);
 }
 
 
 //display the session logs, get the session logs from device, loop through them to show them all, remember index of the one user chooses to open that one on pc.
+//will get called everytime a new session is done.
 void MainWindow::SessionLogs(){
+    //enable all the buttons that were disabled when the a new session was started
+    ui->upButton->setEnabled(true);
+    ui->downButton->setEnabled(true);
+    ui->selectButton->setEnabled(true);
+    ui->playButton->setEnabled(true);
+    ui->menuButton->setEnabled(true);
 
+    qInfo("in SessionLogs");
+    Session** sessions = device->getSessions();
+    QStringList stringList;
+
+    for (int i = 0; sessions[i] != nullptr; i++){
+        QDateTime startTime = sessions[i]->getStartTime();
+        stringList << startTime.toString();
+    }
+
+    QStringListModel* model = new QStringListModel(stringList, this);
+
+    ui->listView->setModel(model);
 }
 
 
 //DISPLAY PC
 //display a session's log on the pc screen, shows date of session, and
-void MainWindow::PCScreen(int sessionExample){
-    ui->pcLabel1->setText(QString::number(testLogs[sessionExample]));
+void MainWindow::PCScreen(Session* session){
+    qInfo("in pcScreen now");
+    ui->pcTitle1->setText("Start Date:");
+    ui->pcTitle2->setText("End Date:");
+    ui->pcTitle3->setText("Overall Baseline Start:");
+    ui->pcTitle4->setText("Overall Baseline End:");
+    ui->pcSessionTitle->setText("Session Data:");
+
+
+    ui->pcStart->setText(session->getStartTime().toString());
+    ui->pcEnd->setText(session->getEndTime().toString());
+    ui->pcBaselineStart->setText(QString::number(session->getOverallBaselineStart()));
+    ui->pcBaselineEnd->setText(QString::number(session->getOverallBaselineStart()));
 }
 
 
@@ -174,9 +200,11 @@ void MainWindow::Charge()
     //if statement check weather or not it plugged in, does charge function accordingly
     if(charging){
         charging = false;
+        ui->label_6->setText("Charger OFF");
     }
     else{
         battery = 100;
+        ui->label_6->setText("Charger ON");
         ui->batteryLabel->setText(QString::number(battery) + "%");
         ui->lowBatteryLabel->setText("");
         charging = true;
@@ -190,6 +218,7 @@ void MainWindow::Aux()
 {
     if(auxPlug){
         ui->auxLabel->setText("Aux Cord is plugged out - Plug in to use device!");
+        ui->label_5->setText("Headsets OFF");
         ui->upButton->setEnabled(false);
         ui->downButton->setEnabled(false);
         ui->selectButton->setEnabled(false);
@@ -197,9 +226,11 @@ void MainWindow::Aux()
         ui->stopButton->setEnabled(false);
         ui->pauseButton->setEnabled(false);
         auxPlug = false;
+        device->pauseSession();
     }
     else{
         ui->auxLabel->setText("");
+        ui->label_5->setText("Headsets ON");
         ui->upButton->setEnabled(true);
         ui->downButton->setEnabled(true);
         ui->selectButton->setEnabled(true);
@@ -207,6 +238,7 @@ void MainWindow::Aux()
         ui->stopButton->setEnabled(true);
         ui->pauseButton->setEnabled(true);
         auxPlug = true;
+        device->resumeSession();
     }
 }
 
@@ -289,10 +321,11 @@ void MainWindow::MenuEnter()
         else{
             switch(menuIndex){
                 case 0:
-                    ui->stackedWidget->setCurrentWidget(ui->page_2);
+                    Start();
                     break;
                 case 1:
                     ui->stackedWidget->setCurrentWidget(ui->page_5);
+                    qInfo("switching to session screen");
                     break;
                 case 2:
                     ui->stackedWidget->setCurrentWidget(ui->page_4);
@@ -306,10 +339,13 @@ void MainWindow::MenuEnter()
     }
 
     //if they are choosing to view a session on the session logs page
-    if(ui->stackedWidget->currentWidget()->objectName() == "page_5"){
+    else if(ui->stackedWidget->currentWidget()->objectName() == "page_5"){
+        qInfo("session listView selected");
         QModelIndex currIndex = ui->listView->currentIndex();
         int selectedIndex = currIndex.row();
-        PCScreen(selectedIndex);
+        if(device->getNumSessions() != 0 && selectedIndex != 256){
+            PCScreen(device->getSessions()[selectedIndex]);
+        }
     }
 }
 
@@ -324,4 +360,28 @@ void MainWindow::onDateChanged(const QDate &date)
 {
     QTime currTime = ui->dateTimeEdit->time();
     ui->dateTimeEdit->setDateTime(QDateTime(date, currTime));
+}
+
+
+void MainWindow::updateProgress(){
+    //get the current time, then subtract for each electrode
+    timer -= 1.380952380952381;
+    qInfo("CALLED UPDATE PROGRESS");
+
+    int timerInt = static_cast<int>(timer);
+    QString newTime = (timerInt < 10) ? QString("0%1").arg(timerInt) : QString::number(timerInt);
+
+    ui->timerLabel->setText("0:" + newTime);
+
+    progressValue += 476;
+    ui->progressBar->setValue(progressValue / 100);
+}
+
+void MainWindow::progressComplete(){
+    qInfo("RESETING NOW");
+    timer = 29;
+    ui->timerLabel->setText("0:29");
+    progressValue = 0;
+    ui->progressBar->setValue(progressValue / 100);
+    MenuButton();
 }

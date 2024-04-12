@@ -5,6 +5,7 @@
 #include "device.h"
 #include <QLabel>
 #include <QStringListModel>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,10 +24,11 @@ public:
 
     //menu options
     void NewSession(QDateTime const &dateTime);
-    void SessionLogs();
 
     //pc screen
-    void PCScreen(int sessionExample);
+    void PCScreen(Session* session);
+
+
 
 private:
     Ui::MainWindow *ui;
@@ -36,14 +38,18 @@ private:
     int battery;
     bool charging;
     bool auxPlug;
-    int testLogs[10];
     Device *device;
+    double timer;
+    int progressValue;
 
 public slots:
     //active the lights
     void RedLight();
     void BlueLight();
     void GreenLight();
+
+    //load session logs
+    void SessionLogs();
 
     //power and charge
     void Power();
@@ -65,6 +71,11 @@ public slots:
     //date and time:
     void onTimeChanged(const QTime &time);
     void onDateChanged(const QDate &date);
+
+    //update progress and time during session
+    void updateProgress();
+    void progressComplete();
+
 
 };
 #endif // MAINWINDOW_H

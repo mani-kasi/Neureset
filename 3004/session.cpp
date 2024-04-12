@@ -44,7 +44,6 @@ void Session::setEndTime(const QDateTime& endTime) {
 }
 
 QDateTime Session::getStartTime()const{
-    cout<<this->startTime.toString("yyyy-MM-dd HH:mm:ss").toStdString()<<endl;
     return startTime;
 }
 QDateTime Session::getEndTime() const{

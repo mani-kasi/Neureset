@@ -19,10 +19,13 @@ public:
     void newSession(QDateTime const &dateTime);
     void power(bool on);
     void saveSession();
-    void pauseSession();
     void resumeSession();
+    void pauseSession();
     void stopSession();
     void delay(int);
+
+    Session** getSessions();
+    int getNumSessions();
 
 private:
     Session* sessions[MAX_SESSIONS];
@@ -44,6 +47,8 @@ signals:
     void sendRedLightSignal();
     void sendGreenLightSignal();
     void sendProgress();
+    void progressDone();
+    void updateSessionLogs();
 };
 
 #endif // DEVICE_H
