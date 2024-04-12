@@ -6,12 +6,19 @@ Session::Session(QObject *parent, const QDateTime& startTime,  QVector<Electrode
     : QObject{parent}
 {
     this->startTime = startTime;
+    if(startTime.isValid()){
+        this->startTime.setDate(QDate(2024, 4, 12));
+        this->startTime.setTime(QTime(7, 0));
+    }
     this->electrodes = electrodes;
 }
 
 void Session::startSession(){
     qInfo("Session started");
     running = true;
+    for(int i = 0; i<electrodes.length(); i++){
+        electrodes[i]->generateBaselineData();
+    }
     overallBaselineStart = calcOverallBaseline();
 }
 
@@ -44,6 +51,7 @@ void Session::setEndTime(const QDateTime& endTime) {
 }
 
 QDateTime Session::getStartTime()const{
+    cout<<this->startTime.toString("yyyy-MM-dd HH:mm:ss").toStdString()<<endl;
     return startTime;
 }
 QDateTime Session::getEndTime() const{
@@ -68,10 +76,11 @@ double Session::calcOverallBaseline(){
 
     double tempSum = 0;
     for(int i = 0; i<electrodes.length(); i++){
-        electrodes[i]->generateBaselineData();
         tempSum = tempSum + electrodes[i]->getDominantFrequency();
     }
     double tempDomAvg = tempSum/electrodes.length();
+    qInfo("data:");
+    cout<<tempDomAvg<<endl;
 
     return tempDomAvg;
 }

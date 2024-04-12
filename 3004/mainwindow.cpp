@@ -135,7 +135,7 @@ void MainWindow::SessionLogs(){
     Session** sessions = device->getSessions();
     QStringList stringList;
 
-    for (int i = 0; sessions[i] != nullptr; i++){
+    for (int i = 0; sessions[i] != NULL; i++){
         QDateTime startTime = sessions[i]->getStartTime();
         stringList << startTime.toString();
     }
@@ -160,7 +160,7 @@ void MainWindow::PCScreen(Session* session){
     ui->pcStart->setText(session->getStartTime().toString());
     ui->pcEnd->setText(session->getEndTime().toString());
     ui->pcBaselineStart->setText(QString::number(session->getOverallBaselineStart()));
-    ui->pcBaselineEnd->setText(QString::number(session->getOverallBaselineStart()));
+    ui->pcBaselineEnd->setText(QString::number(session->getOverallBaselineEnd()));
 }
 
 

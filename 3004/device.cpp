@@ -65,12 +65,13 @@ void Device::newSession(QDateTime const &dateTime) {
     //we need to figure out a way to get the updated time from mainwindow
     curSession->setEndTime(dateTime);
     saveSession();
+    delay(0050);
     curSession = NULL;
-    emit updateSessionLogs();
     qInfo("sent sessionLogs signal");
     emit sendBlueLightSignal();
     emit sendGreenLightSignal();
     qInfo("PROGRESS IS DONE");
+    emit updateSessionLogs();
     emit progressDone();
 }
 

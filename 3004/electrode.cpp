@@ -64,7 +64,6 @@ void Electrode::applyTreatment() {
 
         // Update the dominant frequency for the next interval
         dominantFrequency = modulatedFrequency;
-
     }
 
 }
