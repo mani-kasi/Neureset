@@ -347,6 +347,10 @@ void MainWindow::MenuEnter()
             PCScreen(device->getSessions()[selectedIndex]);
         }
     }
+
+    else if(ui->stackedWidget->currentWidget()->objectName() == "page_6"){
+        qInfo("TEST GRAPH ENTER BUTTON PRESSED");
+    }
 }
 
 //TIME:

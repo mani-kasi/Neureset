@@ -60,11 +60,13 @@ QDateTime Session::getEndTime() const{
 }
 
 double Session::getOverallBaselineStart() const{
+    std::cout << std::to_string(overallBaselineStart) << std::endl;
     return overallBaselineStart;
 }
 
 
 double Session::getOverallBaselineEnd() const{
+    std::cout << std::to_string(overallBaselineEnd) << std::endl;
     return overallBaselineEnd;
 }
 
