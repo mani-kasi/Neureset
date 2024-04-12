@@ -2,7 +2,7 @@
 
 
 
-Session::Session(QObject *parent, const QDateTime& startTime,  Electrode** electrodes)
+Session::Session(QObject *parent, const QDateTime& startTime,  QVector<Electrode*>electrodes)
     : QObject{parent}
 {
     this->startTime = startTime;
@@ -68,10 +68,11 @@ double Session::calcOverallBaseline(){
 
 
     double tempSum = 0;
-    for(int i = 0; i<NUM_ELECTRODES; i++){
+    for(int i = 0; i<electrodes.length(); i++){
+        electrodes[i]->generateBaselineData();
         tempSum = tempSum + electrodes[i]->getDominantFrequency();
     }
-    double tempDomAvg = tempSum/NUM_ELECTRODES;
+    double tempDomAvg = tempSum/electrodes.length();
 
     return tempDomAvg;
 }

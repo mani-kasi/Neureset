@@ -10,8 +10,6 @@ Device::Device(QObject *parent)
 
     numSessions = 0;
     power(true);
-    //QVector<int> testvec;
-    electrodes = new Electrode*[NUM_ELECTRODES];
 }
 
 Device::~Device() {
@@ -30,24 +28,19 @@ void Device::newSession(QDateTime const &dateTime) {
     if (numSessions+1 == MAX_SESSIONS) {
         return;
     }
-    //testarr[0]=5;
+
+
     for (int i = 0; i < NUM_ELECTRODES; i++) {
-        Electrode* test = new Electrode();
-        qInfo("0");
-        electrodes[i] = new Electrode();
-        qInfo("1");
+        electrodes.append(new Electrode());
     }
 
     curSession = new Session(nullptr, dateTime, electrodes);
-    qInfo("2");
 
     emit sendBlueLightSignal();
-    qInfo("3");
 
 
     //Need baseline at start of session
     curSession->startSession();
-    qInfo("4");
 
     emit sendProgress();
     delay(5000);
@@ -57,6 +50,10 @@ void Device::newSession(QDateTime const &dateTime) {
     for (int i = 0; i < NUM_ELECTRODES; i++) {   
         emit sendGreenLightSignal();
         emit sendProgress();
+        qInfo("Applying treatment for electrode %d:",i);
+        electrodes[i]->applyTreatment();
+        electrodes[i]->applyTreatment();
+        electrodes[i]->applyTreatment();
         electrodes[i]->applyTreatment();
         delay(1000);
 

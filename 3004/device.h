@@ -27,7 +27,7 @@ public:
 private:
     Session* sessions[MAX_SESSIONS];
     Session* curSession;
-    Electrode** electrodes;
+    QVector<Electrode*> electrodes;
     int beforeBaseline;
     int afterBaseline;
     int dateTime;

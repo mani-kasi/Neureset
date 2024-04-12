@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    Device *device = new Device();
+
     //device on by default
     power = true;
 
@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //connect all the slots
     ui->setupUi(this);
+    device = new Device();
     connect(ui->powerButton, &QPushButton::clicked, this, &MainWindow::Power);
     connect(ui->charger, &QPushButton::clicked, this, &MainWindow::Charge);
     connect(ui->auxcord, &QPushButton::clicked, this, &MainWindow::Aux);
