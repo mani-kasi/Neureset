@@ -112,7 +112,7 @@ image: url(:/menu.png);</string>
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="styleSheet">

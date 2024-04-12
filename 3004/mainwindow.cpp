@@ -19,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
     auxPlug = true;
     timer = 29;
     progressValue = 0;
-
     //connect all the slots
     ui->setupUi(this);
     device = new Device();
@@ -44,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->timeEdit, &QTimeEdit::timeChanged, this, &MainWindow::onTimeChanged);
     connect(ui->dateEdit, &QDateEdit::dateChanged, this, &MainWindow::onDateChanged);
+    QTimer* timeUpdate = new QTimer(this);
+    connect(timeUpdate, &QTimer::timeout, this, &MainWindow::updateTime);
+    timeUpdate->start(1000);
 
     //init the menu labels (options) to access them easier
     menuLabels[0] = ui->newSessionLabel;
@@ -364,6 +366,12 @@ void MainWindow::onDateChanged(const QDate &date)
 {
     QTime currTime = ui->dateTimeEdit->time();
     ui->dateTimeEdit->setDateTime(QDateTime(date, currTime));
+}
+
+void MainWindow::updateTime(){
+    QDateTime currTime = ui->dateTimeEdit->dateTime();
+    currTime = currTime.addSecs(60);
+    ui->dateTimeEdit->setDateTime(currTime);
 }
 
 

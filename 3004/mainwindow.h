@@ -71,6 +71,7 @@ public slots:
     //date and time:
     void onTimeChanged(const QTime &time);
     void onDateChanged(const QDate &date);
+    void updateTime();
 
     //update progress and time during session
     void updateProgress();
