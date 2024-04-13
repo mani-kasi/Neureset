@@ -42,9 +42,6 @@ signals:
     void sessionPaused();
     void sessionResumed();
     void sessionStopped();
-    void contactLost();
-    void contactReestablished();
-    void sessionErased();
     void progressUpdated(double progress);
 
 private slots:

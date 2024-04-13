@@ -92,7 +92,3 @@ string Session::print() {
     string temp = "DateTime: "+ startTime.toString("yyyy-MM-dd HH:mm:ss").toStdString()+"\n Overall Baseline Start: "+to_string(overallBaselineStart)+"\n Overall Baseline Start: "+ to_string(overallBaselineEnd);
     return temp;
 }
-
-void Session::onContactLost(){}
-void Session::onContactReestablished(){}
-void Session::onPauseTimeout(){}
