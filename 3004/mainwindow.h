@@ -27,7 +27,7 @@ public:
     void PCScreen(Session* session);
 
     //graph
-    //void updateTestUi(int id);
+    void updateTestUi(int id);
     void chooseElectrode();
 
 
@@ -83,5 +83,7 @@ public slots:
     void progressComplete();
 
     //void on_listView_2_doubleClicked(const QModelIndex &index);
+private slots:
+    void on_listView_2_doubleClicked(const QModelIndex &index);
 };
 #endif // MAINWINDOW_H

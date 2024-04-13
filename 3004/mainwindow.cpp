@@ -184,57 +184,55 @@ void MainWindow::chooseElectrode(){
 
 //uncomment after adding getElectrodes() function and plotWidget to page_7 on ui
 
-//void MainWindow::updateTestUi(int id){
+void MainWindow::updateTestUi(int id){
 
-//    qInfo("PLOT GRAPH");
+    qInfo("PLOT GRAPH");
 
-//    QVector<Electrode*>* electrodes = device->getElectrodes();
-//    Electrode* electrode = (*electrodes)[id];
+    QVector<Electrode*>* electrodes = device->getElectrodes();
+    Electrode* electrode = (*electrodes)[id];
 
-//    QVector<double> treatmentData = electrode->getTreatmentData();
-//    QVector<double> dominantWaveform = electrode->getBaselineWaveform();
-
-
-//    QVector<double> x(treatmentData.size());
-//    for (int i = 0; i < x.size(); ++i) {
-//        x[i] = i / 128.0;
-//    }
-//    //This plots  both but I think we will only plot treated waveform?
-//    // Set up the custom plot
-//    QCustomPlot *customPlot = ui->plotWidget;
-//    QFont legendFont = customPlot->legend->font();
-//    legendFont.setPointSize(8); // Set a smaller font size (default is usually 9 or 10)
-//    customPlot->legend->setFont(legendFont);
-
-//    customPlot->addGraph(); // Treated waveform graph
-//    customPlot->graph(0)->setData(x, treatmentData);
-//    customPlot->graph(0)->setName("Treated Waveform");
-//    customPlot->graph(0)->setPen(QPen(Qt::blue));
-
-//    customPlot->addGraph();
-//    customPlot->graph(1)->setData(x, dominantWaveform);
-//    customPlot->graph(1)->setName("Dominant Waveform");
-//    customPlot->graph(1)->setPen(QPen(Qt::red));
+    QVector<double> treatmentData = electrode->getTreatmentData();
+    QVector<double> dominantWaveform = electrode->getBaselineWaveform();
 
 
-//    customPlot->rescaleAxes();
+    QVector<double> x(treatmentData.size());
+    for (int i = 0; i < x.size(); ++i) {
+        x[i] = i / 128.0;
+    }
+    //This plots  both but I think we will only plot treated waveform?
+    // Set up the custom plot
+    QCustomPlot *customPlot = ui->plotWidget;
 
 
-//    customPlot->xAxis->scaleRange(1.4, customPlot->xAxis->range().center());
-//    customPlot->yAxis->scaleRange(1.4, customPlot->yAxis->range().center());
+    customPlot->addGraph(); // Treated waveform graph
+    customPlot->graph(0)->setData(x, treatmentData);
+    customPlot->graph(0)->setName("Treated Waveform");
+    customPlot->graph(0)->setPen(QPen(Qt::blue));
+
+    customPlot->addGraph();
+    customPlot->graph(1)->setData(x, dominantWaveform);
+    customPlot->graph(1)->setName("Dominant Waveform");
+    customPlot->graph(1)->setPen(QPen(Qt::red));
 
 
-//    customPlot->xAxis->setLabel("Time (s)");
-//    customPlot->yAxis->setLabel("Amplitude");
+    customPlot->rescaleAxes();
 
 
-//    customPlot->legend->setVisible(true);
+    customPlot->xAxis->scaleRange(1.4, customPlot->xAxis->range().center());
+    customPlot->yAxis->scaleRange(1.4, customPlot->yAxis->range().center());
 
-//    customPlot->replot();
+
+    customPlot->xAxis->setLabel("Time (s)");
+    customPlot->yAxis->setLabel("Amplitude");
+
+
+    customPlot->legend->setVisible(false);
+
+    customPlot->replot();
 
 
 
-//}
+}
 
 
 
@@ -508,8 +506,9 @@ void MainWindow::MenuEnter()
         }
     }
 
-    else if(ui->stackedWidget->currentWidget()->objectName() == "page_6"){
+    if(ui->stackedWidget->currentWidget()->objectName() == "page_6"){
         //qInfo("TEST GRAPH ENTER BUTTON PRESSED");
+         chooseElectrode();
     }
 }
 
@@ -560,10 +559,13 @@ void MainWindow::progressComplete(){
     MenuButton();
 }
 
-//void MainWindow::on_listView_2_doubleClicked(const QModelIndex &index)
-//{
-//       ui->stackedWidget->setCurrentWidget(ui->page_7);
-//       QModelIndex currIndex = ui->listView_2->currentIndex();
-//       int selectedIndex = currIndex.row();
-//       updateTestUi(selectedIndex);
-//}
+
+
+void MainWindow::on_listView_2_doubleClicked(const QModelIndex &index)
+{
+    ui->stackedWidget->setCurrentWidget(ui->page_7);
+    QModelIndex currIndex = ui->listView_2->currentIndex();
+    int selectedIndex = currIndex.row();
+    updateTestUi(selectedIndex);
+}
+

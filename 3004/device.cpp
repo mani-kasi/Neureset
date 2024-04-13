@@ -130,3 +130,10 @@ Session** Device::getSessions() {
 int Device::getNumSessions(){
     return numSessions;
 }
+
+
+QVector<Electrode*>* Device::getElectrodes()
+{
+    return &electrodes;
+}
+

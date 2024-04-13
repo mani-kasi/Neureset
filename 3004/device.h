@@ -26,6 +26,7 @@ public:
 
     Session** getSessions();
     int getNumSessions();
+    QVector<Electrode*>* getElectrodes();
 
 private:
     Session* sessions[MAX_SESSIONS];
