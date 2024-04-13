@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    Device *device = new Device();
+
     //device on by default
     power = true;
 
@@ -17,9 +17,15 @@ MainWindow::MainWindow(QWidget *parent)
     battery = 100;
     charging = false;
     auxPlug = true;
+    timer = 29;
+    progressValue = 0;
+    pause = false;
+    stop = false;
+    play = false;
 
     //connect all the slots
     ui->setupUi(this);
+    device = new Device();
     connect(ui->powerButton, &QPushButton::clicked, this, &MainWindow::Power);
     connect(ui->charger, &QPushButton::clicked, this, &MainWindow::Charge);
     connect(ui->auxcord, &QPushButton::clicked, this, &MainWindow::Aux);
@@ -34,9 +40,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(device, SIGNAL(sendBlueLightSignal()), this, SLOT (BlueLight()));
     connect(device, SIGNAL(sendGreenLightSignal()), this, SLOT (GreenLight()));
     connect(device, SIGNAL(sendRedLightSignal()), this, SLOT (RedLight()));
+    connect(device, SIGNAL(updateSessionLogs()), this, SLOT (SessionLogs()));
+    connect(device, SIGNAL(sendProgress()), this, SLOT (updateProgress()));
+    connect(device, SIGNAL(progressDone()), this, SLOT (progressComplete()));
+
 
     connect(ui->timeEdit, &QTimeEdit::timeChanged, this, &MainWindow::onTimeChanged);
     connect(ui->dateEdit, &QDateEdit::dateChanged, this, &MainWindow::onDateChanged);
+    QTimer* timeUpdate = new QTimer(this);
+    connect(timeUpdate, &QTimer::timeout, this, &MainWindow::updateTime);
+    timeUpdate->start(1000);
 
     //init the menu labels (options) to access them easier
     menuLabels[0] = ui->newSessionLabel;
@@ -44,24 +57,9 @@ MainWindow::MainWindow(QWidget *parent)
     menuLabels[2] = ui->dateLabel;
     menuLabels[3] = ui->testLabel;
 
-    //for testing the logs view on the screen
-    for(int i = 0; i < 10; i ++){
-        testLogs[i] = i;
-    }
-
-    //this will load the logs on the listView, but we wouldnt need this cuz there will be no logs when the we run the code
-    QStringList stringList;
-    for(int i = 0; i < 10; ++i){
-        stringList << QString::number(testLogs[i]);
-    }
-
-    QStringListModel *model = new QStringListModel(stringList, this);
-    ui->listView->setModel(model);
-
-
-    //testing progress bar for session view screen:
-    ui->progressBar->setValue(85);
-    //this will be done from device when running the session, and updated appropriately, along with the timer.
+    //shouldnt be able to press pause or stop before session starts
+    ui->stopButton->setEnabled(false);
+    ui->pauseButton->setEnabled(false);
 }
 
 
@@ -72,12 +70,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-
-//reset function that will get called after session is done, just brings back device state to beginning (main menu), we can call this after we run new session
-void MainWindow::Reset(){
-
 }
 
 //LIGHTS - looks like device will do this.
@@ -119,20 +111,124 @@ void MainWindow::GreenLight(){
 //MENU OPTION FUNCTIONS
 //starts a new session, pass in current date.
 void MainWindow::NewSession(QDateTime const &dateTime){
+    play = true;
+    ui->stackedWidget->setCurrentWidget(ui->page_2);
+
+        ui->upButton->setEnabled(false);
+        ui->downButton->setEnabled(false);
+        ui->selectButton->setEnabled(false);
+        ui->playButton->setEnabled(false);
+        ui->menuButton->setEnabled(false);
+
+        ui->pauseButton->setEnabled(true);
+        ui->stopButton->setEnabled(true);
+
     device->newSession(dateTime);
 }
 
 
 //display the session logs, get the session logs from device, loop through them to show them all, remember index of the one user chooses to open that one on pc.
+//will get called everytime a new session is done.
 void MainWindow::SessionLogs(){
+    //enable all the buttons that were disabled when the a new session was started
+    ui->upButton->setEnabled(true);
+    ui->downButton->setEnabled(true);
+    ui->selectButton->setEnabled(true);
+    ui->playButton->setEnabled(true);
+    ui->menuButton->setEnabled(true);
 
+    ui->pauseButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
+
+    Session** sessions = device->getSessions();
+    QStringList stringList;
+
+    for (int i = 0; i < device->getNumSessions(); i++){
+        QDateTime startTime = sessions[i]->getStartTime();
+        stringList << startTime.toString();
+    }
+
+    QStringListModel* model = new QStringListModel(stringList, this);
+
+    ui->listView->setModel(model);
 }
 
 
 //DISPLAY PC
 //display a session's log on the pc screen, shows date of session, and
-void MainWindow::PCScreen(int sessionExample){
-    ui->pcLabel1->setText(QString::number(testLogs[sessionExample]));
+void MainWindow::PCScreen(Session* session){
+    ui->pcTitle1->setText("Start Date:");
+    ui->pcTitle2->setText("End Date:");
+    ui->pcTitle3->setText("Overall Baseline Start:");
+    ui->pcTitle4->setText("Overall Baseline End:");
+    ui->pcSessionTitle->setText("Session Data:");
+
+
+    ui->pcStart->setText(session->getStartTime().toString());
+    ui->pcEnd->setText(session->getEndTime().toString());
+    ui->pcBaselineStart->setText(QString::number(session->getOverallBaselineStart()));
+    ui->pcBaselineEnd->setText(QString::number(session->getOverallBaselineEnd()));
+}
+
+void MainWindow::chooseElectrode(){
+    QStringList stringList;
+
+    for (int i = 0; i != NUM_ELECTRODES; i++){
+        stringList << QString::number(i+1);
+
+}
+    QStringListModel* model = new QStringListModel(stringList, this);
+
+    ui->listView_2->setModel(model);
+}
+
+//uncomment after adding getElectrodes() function and plotWidget to page_7 on ui
+
+void MainWindow::updateTestUi(int id){
+    QVector<Electrode*>* electrodes = device->getElectrodes();
+    Electrode* electrode = (*electrodes)[id];
+
+    QVector<double> treatmentData = electrode->getTreatmentData();
+    QVector<double> dominantWaveform = electrode->getBaselineWaveform();
+
+
+    QVector<double> x(treatmentData.size());
+    for (int i = 0; i < x.size(); ++i) {
+        x[i] = i / 128.0;
+    }
+    //This plots  both but I think we will only plot treated waveform?
+    // Set up the custom plot
+    QCustomPlot *customPlot = ui->plotWidget;
+
+
+    customPlot->addGraph(); // Treated waveform graph
+    customPlot->graph(0)->setData(x, treatmentData);
+    customPlot->graph(0)->setName("Treated Waveform");
+    customPlot->graph(0)->setPen(QPen(Qt::blue));
+
+    customPlot->addGraph();
+    customPlot->graph(1)->setData(x, dominantWaveform);
+    customPlot->graph(1)->setName("Dominant Waveform");
+    customPlot->graph(1)->setPen(QPen(Qt::red));
+
+
+    customPlot->rescaleAxes();
+
+
+    customPlot->xAxis->scaleRange(1.4, customPlot->xAxis->range().center());
+    customPlot->yAxis->scaleRange(1.4, customPlot->yAxis->range().center());
+
+
+    customPlot->xAxis->setLabel("Time (s)");
+    customPlot->yAxis->setLabel("Amplitude");
+
+
+    customPlot->legend->setVisible(false);
+
+    customPlot->replot();
+
+
+
 }
 
 
@@ -149,19 +245,56 @@ void MainWindow::Power()
 {
     // check if device is on or off, sends accordingly
     if(power == true){
+        if(play){
+            Stop();
+            stop = true;
+        }
         ui->stackedWidget->setCurrentWidget(ui->page_3);
         device->power(false);
         power = false;
+        ui->upButton->setEnabled(false);
+        ui->downButton->setEnabled(false);
+        ui->selectButton->setEnabled(false);
+        ui->playButton->setEnabled(false);
+        ui->stopButton->setEnabled(false);
+        ui->pauseButton->setEnabled(false);
+        ui->menuButton->setEnabled(false);
     }
     else if( battery <= 0){
         ui->stackedWidget->setCurrentWidget(ui->page_3);
         device->power(false);
         power = false;
+        ui->upButton->setEnabled(false);
+        ui->downButton->setEnabled(false);
+        ui->selectButton->setEnabled(false);
+        ui->playButton->setEnabled(false);
+        ui->stopButton->setEnabled(false);
+        ui->pauseButton->setEnabled(false);
+        ui->menuButton->setEnabled(false);
     }
     else{
-        ui->stackedWidget->setCurrentWidget(ui->page);
         device->power(true);
         power = true;
+        if(stop){
+            ui->stackedWidget->setCurrentWidget(ui->page_stop);
+            ui->upButton->setEnabled(false);
+            ui->downButton->setEnabled(false);
+            ui->selectButton->setEnabled(false);
+            ui->playButton->setEnabled(false);
+            ui->stopButton->setEnabled(false);
+            ui->pauseButton->setEnabled(false);
+            ui->menuButton->setEnabled(false);
+        }
+        else{
+            MenuButton();
+            ui->upButton->setEnabled(true);
+            ui->downButton->setEnabled(true);
+            ui->selectButton->setEnabled(true);
+            ui->playButton->setEnabled(true);
+            ui->stopButton->setEnabled(false);
+            ui->pauseButton->setEnabled(false);
+            ui->menuButton->setEnabled(true);
+        }
     }
 
 }
@@ -172,9 +305,11 @@ void MainWindow::Charge()
     //if statement check weather or not it plugged in, does charge function accordingly
     if(charging){
         charging = false;
+        ui->label_6->setText("Charger OFF");
     }
     else{
         battery = 100;
+        ui->label_6->setText("Charger ON");
         ui->batteryLabel->setText(QString::number(battery) + "%");
         ui->lowBatteryLabel->setText("");
         charging = true;
@@ -188,31 +323,67 @@ void MainWindow::Aux()
 {
     if(auxPlug){
         ui->auxLabel->setText("Aux Cord is plugged out - Plug in to use device!");
+        ui->label_5->setText("Headsets OFF");
         ui->upButton->setEnabled(false);
+        ui->menuButton->setEnabled(false);
+        ui->powerButton->setEnabled(false);
         ui->downButton->setEnabled(false);
         ui->selectButton->setEnabled(false);
         ui->playButton->setEnabled(false);
         ui->stopButton->setEnabled(false);
         ui->pauseButton->setEnabled(false);
         auxPlug = false;
+        if(play){
+            ui->stackedWidget->setCurrentWidget(ui->page_pause);
+            device->pauseSession();
+        }
+
     }
     else{
         ui->auxLabel->setText("");
-        ui->upButton->setEnabled(true);
-        ui->downButton->setEnabled(true);
-        ui->selectButton->setEnabled(true);
-        ui->playButton->setEnabled(true);
-        ui->stopButton->setEnabled(true);
-        ui->pauseButton->setEnabled(true);
+        ui->label_5->setText("Headsets ON");
         auxPlug = true;
+        ui->powerButton->setEnabled(true);
+        if(play){
+            ui->menuButton->setEnabled(false);
+            ui->upButton->setEnabled(false);
+            ui->downButton->setEnabled(false);
+            ui->selectButton->setEnabled(false);
+            ui->playButton->setEnabled(false);
+            ui->stopButton->setEnabled(true);
+            ui->pauseButton->setEnabled(true);
+            ui->stackedWidget->setCurrentWidget(ui->page_2);
+            device->resumeSession();
+        }
+        else{
+            ui->menuButton->setEnabled(true);
+            ui->upButton->setEnabled(true);
+            ui->downButton->setEnabled(true);
+            ui->selectButton->setEnabled(true);
+            ui->playButton->setEnabled(true);
+            ui->stopButton->setEnabled(false);
+            ui->pauseButton->setEnabled(false);
+        }
     }
 }
 
 //Start Button:
 void MainWindow::Start()
 {
-    //disable start button til session is done?
-    //enable pause button if its disable
+    //makes battery lose charge for a new session:
+    if(charging == false){
+        battery -= 5;
+        ui->batteryLabel->setText(QString::number(battery) + "%");
+    }
+    //checks if battery is low and gives user a warning
+    if(battery <= 5 && battery > 0){
+        ui->lowBatteryLabel->setText("LOW BATTERY - Please Charge!");
+    }
+    //checks if battery is dead and turns off
+    else if(battery <= 0){
+        ui->lowBatteryLabel->setText("");
+        Power();
+    }
     //passes the current date time to new session
     NewSession(ui->dateTimeEdit->dateTime());
 }
@@ -221,14 +392,46 @@ void MainWindow::Start()
 void MainWindow::Pause()
 {
     //disable pause button til session is unpaused
-    device->pauseSession();
+    //device->pauseSession();
+
+    if(!pause){
+        ui->stackedWidget->setCurrentWidget(ui->page_pause);
+        ui->upButton->setEnabled(false);
+        ui->downButton->setEnabled(false);
+        ui->selectButton->setEnabled(false);
+        ui->playButton->setEnabled(false);
+        ui->stopButton->setEnabled(false);
+        ui->menuButton->setEnabled(false);
+
+        ui->pauseButton->setEnabled(true);
+        pause = true;
+        device->pauseSession();
+    }
+    else{
+        ui->stopButton->setEnabled(true);
+        ui->pauseButton->setEnabled(true);
+        ui->stackedWidget->setCurrentWidget(ui->page_2);
+        pause = false;
+        device->resumeSession();
+    }
 }
 
 //Stop Button:
 void MainWindow::Stop()
 {
     //enable start button and pause button if one was disable
-    //device->stopSession();
+    stop = true;
+    play = false;
+    pause = false;
+    ui->stackedWidget->setCurrentWidget(ui->page_stop);
+    ui->upButton->setEnabled(false);
+    ui->downButton->setEnabled(false);
+    ui->selectButton->setEnabled(false);
+    ui->playButton->setEnabled(false);
+    ui->menuButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
+    ui->pauseButton->setEnabled(false);
+    device->stopSession();
 }
 
 //menu list button:
@@ -236,6 +439,12 @@ void MainWindow::MenuButton()
 {
     if(power){
         ui->stackedWidget->setCurrentWidget(ui->page);
+        ui->stopButton->setEnabled(false);
+        ui->pauseButton->setEnabled(false);
+        ui->upButton->setEnabled(true);
+        ui->downButton->setEnabled(true);
+        ui->selectButton->setEnabled(true);
+        ui->playButton->setEnabled(true);
     }
 }
 
@@ -287,27 +496,46 @@ void MainWindow::MenuEnter()
         else{
             switch(menuIndex){
                 case 0:
-                    ui->stackedWidget->setCurrentWidget(ui->page_2);
+                    Start();
                     break;
                 case 1:
                     ui->stackedWidget->setCurrentWidget(ui->page_5);
+                    ui->upButton->setEnabled(false);
+                    ui->downButton->setEnabled(false);
+                    ui->playButton->setEnabled(false);
+                    ui->pauseButton->setEnabled(false);
+                    ui->stopButton->setEnabled(false);
                     break;
                 case 2:
                     ui->stackedWidget->setCurrentWidget(ui->page_4);
+                    ui->upButton->setEnabled(false);
+                    ui->downButton->setEnabled(false);
+                    ui->playButton->setEnabled(false);
+                    ui->pauseButton->setEnabled(false);
+                    ui->stopButton->setEnabled(false);
                     break;
                 case 3:
                     ui->stackedWidget->setCurrentWidget(ui->page_6);
+                    ui->upButton->setEnabled(false);
+                    ui->downButton->setEnabled(false);
+                    ui->playButton->setEnabled(false);
+                    ui->pauseButton->setEnabled(false);
+                    ui->stopButton->setEnabled(false);
                     break;
             }
         }
 
     }
 
-    //if they are choosing to view a session on the session logs page
-    if(ui->stackedWidget->currentWidget()->objectName() == "page_5"){
-        QModelIndex currIndex = ui->listView->currentIndex();
-        int selectedIndex = currIndex.row();
-        PCScreen(selectedIndex);
+    if(ui->stackedWidget->currentWidget()->objectName() == "page_6"){
+        //check to make sure a session is there to choose a electrode from
+        if(device->getNumSessions() == 0){
+            ui->noSession->setText("No Session To View From!");
+        }
+        else{
+            ui->noSession->setText("");
+            chooseElectrode();
+        }
     }
 }
 
@@ -323,3 +551,53 @@ void MainWindow::onDateChanged(const QDate &date)
     QTime currTime = ui->dateTimeEdit->time();
     ui->dateTimeEdit->setDateTime(QDateTime(date, currTime));
 }
+
+void MainWindow::updateTime(){
+    QDateTime currTime = ui->dateTimeEdit->dateTime();
+    currTime = currTime.addSecs(60);
+    ui->dateTimeEdit->setDateTime(currTime);
+}
+
+
+void MainWindow::updateProgress(){
+    //get the current time, then subtract for each electrode
+    timer -= 1.380952380952381;
+
+    int timerInt = static_cast<int>(timer);
+    QString newTime = (timerInt < 10) ? QString("0%1").arg(timerInt) : QString::number(timerInt);
+
+    ui->timerLabel->setText("0:" + newTime);
+
+    progressValue += 476;
+    ui->progressBar->setValue(progressValue / 100);
+}
+
+void MainWindow::progressComplete(){
+    timer = 29;
+    ui->timerLabel->setText("0:29");
+    progressValue = 0;
+    ui->progressBar->setValue(progressValue / 100);
+    if(pause){
+        Pause();
+    }
+    //turn off stop if it hasnt yet
+    stop = false;
+    play = false;
+    MenuButton();
+}
+
+void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
+{
+    int selectedIndex = index.row();
+    PCScreen(device->getSessions()[selectedIndex]);
+}
+
+
+
+void MainWindow::on_listView_2_doubleClicked(const QModelIndex &index)
+{
+    ui->stackedWidget->setCurrentWidget(ui->page_7);
+    int selectedIndex = index.row();
+    updateTestUi(selectedIndex);
+}
+

@@ -6,12 +6,25 @@ Session::Session(QObject *parent, const QDateTime& startTime,  QVector<Electrode
     : QObject{parent}
 {
     this->startTime = startTime;
+    if(!startTime.isValid()){
+        this->startTime.setDate(QDate(2024, 4, 12));
+        this->startTime.setTime(QTime(7, 0));
+    }
     this->electrodes = electrodes;
 }
 
 void Session::startSession(){
+    qInfo("Session started!");
     running = true;
-    overallBaselineStart = calcOverallBaselineStart();
+    for(int i = 0; i<electrodes.length(); i++){
+        electrodes[i]->generateBaselineData();
+    }
+    overallBaselineStart = calcOverallBaseline();
+}
+
+void Session::setOverallBaselineEnd(){
+    qInfo("Session end and baseline calculated!");
+    overallBaselineEnd = calcOverallBaseline();
 }
 
 void Session::pauseSession(){
@@ -38,11 +51,9 @@ void Session::setEndTime(const QDateTime& endTime) {
 }
 
 QDateTime Session::getStartTime()const{
-    cout<<this->startTime.toString("yyyy-MM-dd HH:mm:ss").toStdString()<<endl;
     return startTime;
 }
 QDateTime Session::getEndTime() const{
-    cout<<this->endTime.toString("yyyy-MM-dd HH:mm:ss").toStdString()<<endl;
     return endTime;
 }
 
@@ -58,7 +69,7 @@ double Session::getOverallBaselineEnd() const{
 double Session::getSessionProgress() const{
     return sessionProgress;
 }
-double Session::calcOverallBaselineStart(){
+double Session::calcOverallBaseline(){
 
 
     double tempSum = 0;

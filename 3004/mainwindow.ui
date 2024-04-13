@@ -33,7 +33,7 @@
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">QFrame {border: 2px solid black; background: qlineargradient(spread:pad, x1:0.762, y1:0, x2:0.51269, y2:1, stop:0 rgba(255, 241, 199, 255), stop:0.994924 rgb(220, 204, 129, 255)) }
+     <string notr="true">QFrame {border: 2px solid black; background: qlineargradient(spread:pad, x1:0.762, y1:0, x2:0.51269, y2:1, stop:0 rgba(255, 241, 199, 255), stop:0.994924 rgba(220, 204, 129, 255)) }
 </string>
     </property>
     <property name="frameShape">
@@ -92,7 +92,7 @@
      </property>
      <property name="styleSheet">
       <string notr="true">
-background-color: rgb(255, 241, 199, 255);
+background-color: rgba(255, 241, 199, 255);
 image: url(:/menu.png);</string>
      </property>
      <property name="text">
@@ -112,7 +112,7 @@ image: url(:/menu.png);</string>
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="styleSheet">
@@ -192,7 +192,7 @@ image: url(:/menu.png);</string>
         <rect>
          <x>10</x>
          <y>100</y>
-         <width>191</width>
+         <width>211</width>
          <height>17</height>
         </rect>
        </property>
@@ -207,7 +207,7 @@ image: url(:/menu.png);</string>
         <string notr="true">background: transparent; border: none;</string>
        </property>
        <property name="text">
-        <string>TEST UI</string>
+        <string>VIEW ELECTRODE (TEST UI)</string>
        </property>
       </widget>
      </widget>
@@ -247,7 +247,7 @@ image: url(:/menu.png);</string>
         <string notr="true">background: transparent; border: none;</string>
        </property>
        <property name="text">
-        <string>0:00</string>
+        <string>0:29</string>
        </property>
       </widget>
      </widget>
@@ -375,13 +375,14 @@ image: url(:/menu.png);</string>
         <rect>
          <x>10</x>
          <y>0</y>
-         <width>61</width>
+         <width>221</width>
          <height>31</height>
         </rect>
        </property>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
+         <pointsize>8</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -390,20 +391,194 @@ image: url(:/menu.png);</string>
         <string notr="true">background: transparent; border: none;</string>
        </property>
        <property name="text">
-        <string>Test UI</string>
+        <string>View Recent Session's Electrodes</string>
        </property>
       </widget>
-      <widget class="QWidget" name="widget" native="true">
+      <widget class="QListView" name="listView_2">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>30</y>
-         <width>221</width>
+         <width>211</width>
          <height>121</height>
         </rect>
        </property>
+      </widget>
+      <widget class="QLabel" name="noSession">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>60</y>
+         <width>181</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="styleSheet">
-        <string notr="true">border: 1px solid black;</string>
+        <string notr="true">background: transparent; border: none;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page_stop">
+      <widget class="QLabel" name="label_7">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>20</y>
+         <width>171</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none; ; color: Red</string>
+       </property>
+       <property name="text">
+        <string>Session Stopped!</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_8">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>60</y>
+         <width>121</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none; color: purple</string>
+       </property>
+       <property name="text">
+        <string>Aborting Session.</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_9">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>221</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none;</string>
+       </property>
+       <property name="text">
+        <string>Session is Deleting, Please Wait.</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page_pause">
+      <widget class="QLabel" name="label_11">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>40</y>
+         <width>171</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none; ; color: Blue</string>
+       </property>
+       <property name="text">
+        <string>Session Paused!</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_12">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>80</y>
+         <width>171</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none; color: purple</string>
+       </property>
+       <property name="text">
+        <string>Click Pause to Resume.</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page_7">
+      <widget class="QCustomPlot" name="plotWidget" native="true">
+       <property name="geometry">
+        <rect>
+         <x>-1</x>
+         <y>19</y>
+         <width>241</width>
+         <height>141</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QTextEdit" name="textEdit">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>261</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Red =Treated, Blue = Dominant Freq&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </widget>
@@ -505,7 +680,7 @@ image: url(:/menu.png);</string>
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>131</width>
+       <width>141</width>
        <height>21</height>
       </rect>
      </property>
@@ -762,23 +937,10 @@ background-color: rgb(222, 221, 218); image: url(:/charger.png);</string>
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="testButton">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>10</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TEST BUTTON</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="auxcord">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>180</x>
       <y>50</y>
       <width>31</width>
       <height>41</height>
@@ -804,9 +966,9 @@ background-color: rgb(222, 221, 218); image: url(:/aux1.png);</string>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>150</x>
       <y>20</y>
-      <width>71</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -821,15 +983,15 @@ background-color: rgb(222, 221, 218); image: url(:/aux1.png);</string>
      <string notr="true">background: transparent; border: none;</string>
     </property>
     <property name="text">
-     <string>Headsets</string>
+     <string>Headsets ON</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>270</x>
       <y>20</y>
-      <width>51</width>
+      <width>91</width>
       <height>31</height>
      </rect>
     </property>
@@ -844,17 +1006,160 @@ background-color: rgb(222, 221, 218); image: url(:/aux1.png);</string>
      <string notr="true">background: transparent; border: none;</string>
     </property>
     <property name="text">
-     <string>Charge</string>
+     <string>Charger OFF</string>
     </property>
    </widget>
-   <widget class="QLabel" name="pcLabel1">
+   <widget class="QLabel" name="pcTitle1">
     <property name="geometry">
      <rect>
       <x>480</x>
       <y>170</y>
-      <width>161</width>
+      <width>301</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Sans</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pcTitle2">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>210</y>
+      <width>291</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Sans</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pcTitle3">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>250</y>
+      <width>301</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Sans</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pcTitle4">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>290</y>
+      <width>301</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Sans</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pcStart">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>190</y>
+      <width>241</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pcEnd">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>230</y>
+      <width>261</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pcBaselineStart">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>270</y>
+      <width>271</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pcBaselineEnd">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>310</y>
+      <width>241</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pcSessionTitle">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>150</y>
+      <width>281</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Sans</family>
+      <pointsize>13</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
@@ -879,6 +1184,14 @@ background-color: rgb(222, 221, 218); image: url(:/aux1.png);</string>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

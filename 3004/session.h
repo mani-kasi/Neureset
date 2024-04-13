@@ -31,7 +31,9 @@ public:
 
     double getOverallBaselineStart() const;
     double getOverallBaselineEnd() const;
-    double calcOverallBaselineStart();
+    double calcOverallBaseline();
+
+    void setOverallBaselineEnd();
 
     string print();
 

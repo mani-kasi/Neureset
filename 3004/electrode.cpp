@@ -1,5 +1,6 @@
 #include "electrode.h"
 #include <chrono>
+#include <iostream>
 
 Electrode::Electrode()
     : dominantFrequency(0.0), f1(0.0), A1(0.0), f2(0.0), A2(0.0), f3(0.0), A3(0.0), f4(0.0), A4(0.0) {}
@@ -47,10 +48,11 @@ void Electrode::generateBaselineData() {
 }
 
 void Electrode::applyTreatment() {
+
+
     int numSamples = TREATMENT_DURATION * SAMPLE_RATE;
     treatmentData = baselineData.mid(0, numSamples);
 
-    for (int round = 0; round < 4; ++round) {
     for (int start = 0; start < numSamples; start += TREATMENT_INTERVAL) {
         int end = std::min(start + TREATMENT_INTERVAL, numSamples);
         double modulatedFrequency = dominantFrequency + OFFSET_FREQUENCY;
@@ -61,9 +63,11 @@ void Electrode::applyTreatment() {
         }
 
         // Update the dominant frequency for the next interval
-        dominantFrequency = calculateDominantFrequency();
+        dominantFrequency = modulatedFrequency;
     }
-}
+    //std::cout << std::to_string(dominantFrequency) << std::endl;
+
+
 }
 
 QVector<double> Electrode::getBaselineData() const {

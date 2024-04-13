@@ -3,12 +3,14 @@
 Device::Device(QObject *parent)
     : QObject{parent}
 {
-    //Connect QTimer decrement function
-    //connect(pauseTimer, &QTimer::timeout, this, SLOT (decrementTime()));
-    //There is an int dateTime, not sure how to format that
-    numSessions = 0;
     pauseTimer = new QTimer();
+
+    //Connect QTimer decrement function
+    connect(pauseTimer, &QTimer::timeout, this, &Device::decrementTime);
+
+    numSessions = 0;
     power(true);
+
 }
 
 Device::~Device() {
@@ -22,29 +24,60 @@ Device::~Device() {
 }
 
 void Device::newSession(QDateTime const &dateTime) {
+
     if (numSessions+1 == MAX_SESSIONS) {
         return;
     }
 
-    for (int i = 0; i < NUM_ELECTRODES; i++) {
-        electrodes[i] = new Electrode();
-    }
 
-    //curSession = new Session();
+    for (int i = 0; i < NUM_ELECTRODES; i++) {
+        electrodes.append(new Electrode());
+    }
+    curSession = new Session(nullptr, dateTime, electrodes);
 
     emit sendBlueLightSignal();
 
-    calculateOverallBaseline();
 
-    for (int i = 0; i < NUM_ELECTRODES; i++) {
+    //Need baseline at start of session
+    curSession->startSession();
+    delay(5000);
+
+
+    //Treatment on each electrode
+    for (int i = 0; i < NUM_ELECTRODES; i++) {   
         emit sendGreenLightSignal();
-        //electrodes[i]->treatment()
-        //if paused then
+        emit sendProgress();
+        qInfo("Applying treatment for electrode %d:",i+1);
+        electrodes[i]->applyTreatment();
+        electrodes[i]->applyTreatment();
+        electrodes[i]->applyTreatment();
+        electrodes[i]->applyTreatment();
+        delay(1000);
 
+        //if paused then something needs to happen
     }
-    calculateOverallBaseline();
+
+    //Need baseline at end of session
+    curSession->setOverallBaselineEnd();
+    delay(5000);
+    //we need to figure out a way to get the updated time from mainwindow
+    curSession->setEndTime(dateTime);
     saveSession();
+    delay(0050);
     curSession = NULL;
+    emit sendBlueLightSignal();
+    emit sendGreenLightSignal();
+    emit updateSessionLogs();
+    emit progressDone();
+}
+
+void Device::delay(int millisecondsWait)
+{
+    QEventLoop loop;
+    QTimer t;
+    t.connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
+    t.start(millisecondsWait);
+    loop.exec();
 }
 
 void Device::decrementTime() {
@@ -55,27 +88,27 @@ void Device::decrementTime() {
 }
 
 void Device::pauseSession() {
-    pauseTimer->start(1000);
+//    pauseTimer->start(1000);
     emit sendRedLightSignal();
     //set state to paused
 }
 
 void Device::resumeSession() {
-    if (pauseTimer->isActive()) {
-        pauseTimer->stop();
-    }
-    emit sendBlueLightSignal();
+//    if (pauseTimer->isActive()) {
+//        pauseTimer->stop();
+//    }
+    emit sendRedLightSignal();
 }
 
 void Device::power(bool on) {
     if (on) {
         //This is five minutes in seconds
-        contactTimer = 300;
+        //contactTimer = 300;
     }
     else {
-        for (int i = 0; i < NUM_ELECTRODES; i++) {
-            delete electrodes[i];
-        }
+//        for (int i = 0; i < NUM_ELECTRODES; i++) {
+//            delete electrodes[i];
+//        }
         //Somehow stop flow of program
     }
 }
@@ -85,14 +118,21 @@ void Device::saveSession() {
 }
 
 void Device::stopSession() {
-    delete curSession;
-    //Stop flow of program
+    //delete curSession;
 }
 
-void Device::calculateOverallBaseline() {
-
+//get for the mainwindow
+Session** Device::getSessions() {
+    return sessions;
 }
 
-void Device::calculateBaseline(int site) {
-
+int Device::getNumSessions(){
+    return numSessions;
 }
+
+
+QVector<Electrode*>* Device::getElectrodes()
+{
+    return &electrodes;
+}
+
