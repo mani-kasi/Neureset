@@ -44,11 +44,6 @@ signals:
     void sessionStopped();
     void progressUpdated(double progress);
 
-private slots:
-    void onContactLost();
-    void onContactReestablished();
-    void onPauseTimeout();
-
 private:
     QVector<Electrode*> electrodes;
     bool running = false;
