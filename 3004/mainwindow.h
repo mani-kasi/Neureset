@@ -82,8 +82,9 @@ public slots:
     void updateProgress();
     void progressComplete();
 
-    //void on_listView_2_doubleClicked(const QModelIndex &index);
+
 private slots:
+    void on_listView_doubleClicked(const QModelIndex &index);
     void on_listView_2_doubleClicked(const QModelIndex &index);
 };
 #endif // MAINWINDOW_H

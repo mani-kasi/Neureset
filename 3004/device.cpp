@@ -33,7 +33,6 @@ void Device::newSession(QDateTime const &dateTime) {
     for (int i = 0; i < NUM_ELECTRODES; i++) {
         electrodes.append(new Electrode());
     }
-    cout<<"START DATE IN NEW SESSION" + dateTime.toString("yyyy-MM-dd HH:mm:ss").toStdString()<<endl;
     curSession = new Session(nullptr, dateTime, electrodes);
 
     emit sendBlueLightSignal();

@@ -112,7 +112,7 @@ image: url(:/menu.png);</string>
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>8</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="styleSheet">
@@ -192,7 +192,7 @@ image: url(:/menu.png);</string>
         <rect>
          <x>10</x>
          <y>100</y>
-         <width>191</width>
+         <width>211</width>
          <height>17</height>
         </rect>
        </property>
@@ -207,7 +207,7 @@ image: url(:/menu.png);</string>
         <string notr="true">background: transparent; border: none;</string>
        </property>
        <property name="text">
-        <string>TEST UI</string>
+        <string>VIEW ELECTRODE (TEST UI)</string>
        </property>
       </widget>
      </widget>
@@ -375,13 +375,14 @@ image: url(:/menu.png);</string>
         <rect>
          <x>10</x>
          <y>0</y>
-         <width>61</width>
+         <width>221</width>
          <height>31</height>
         </rect>
        </property>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
+         <pointsize>8</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -390,7 +391,7 @@ image: url(:/menu.png);</string>
         <string notr="true">background: transparent; border: none;</string>
        </property>
        <property name="text">
-        <string>Test UI</string>
+        <string>View Recent Session's Electrodes</string>
        </property>
       </widget>
       <widget class="QListView" name="listView_2">
@@ -401,6 +402,30 @@ image: url(:/menu.png);</string>
          <width>211</width>
          <height>121</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="noSession">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>60</y>
+         <width>181</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none;</string>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </widget>
@@ -655,7 +680,7 @@ p, li { white-space: pre-wrap; }
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>131</width>
+       <width>141</width>
        <height>21</height>
       </rect>
      </property>

@@ -77,7 +77,6 @@ double Session::calcOverallBaseline(){
         tempSum = tempSum + electrodes[i]->getDominantFrequency();
     }
     double tempDomAvg = tempSum/electrodes.length();
-    cout<<tempDomAvg<<endl;
 
     return tempDomAvg;
 }

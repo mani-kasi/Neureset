@@ -143,7 +143,7 @@ void MainWindow::SessionLogs(){
     Session** sessions = device->getSessions();
     QStringList stringList;
 
-    for (int i = 0; sessions[i] != NULL; i++){
+    for (int i = 0; i < device->getNumSessions(); i++){
         QDateTime startTime = sessions[i]->getStartTime();
         stringList << startTime.toString();
     }
@@ -185,9 +185,6 @@ void MainWindow::chooseElectrode(){
 //uncomment after adding getElectrodes() function and plotWidget to page_7 on ui
 
 void MainWindow::updateTestUi(int id){
-
-    qInfo("PLOT GRAPH");
-
     QVector<Electrode*>* electrodes = device->getElectrodes();
     Electrode* electrode = (*electrodes)[id];
 
@@ -279,7 +276,6 @@ void MainWindow::Power()
         device->power(true);
         power = true;
         if(stop){
-            qInfo("STOP IS TRUE SO DOING STOP PAGE FOR TURN ON");
             ui->stackedWidget->setCurrentWidget(ui->page_stop);
             ui->upButton->setEnabled(false);
             ui->downButton->setEnabled(false);
@@ -290,7 +286,6 @@ void MainWindow::Power()
             ui->menuButton->setEnabled(false);
         }
         else{
-            qInfo("STOP IS FALSE");
             MenuButton();
             ui->upButton->setEnabled(true);
             ui->downButton->setEnabled(true);
@@ -330,32 +325,65 @@ void MainWindow::Aux()
         ui->auxLabel->setText("Aux Cord is plugged out - Plug in to use device!");
         ui->label_5->setText("Headsets OFF");
         ui->upButton->setEnabled(false);
+        ui->menuButton->setEnabled(false);
+        ui->powerButton->setEnabled(false);
         ui->downButton->setEnabled(false);
         ui->selectButton->setEnabled(false);
         ui->playButton->setEnabled(false);
         ui->stopButton->setEnabled(false);
         ui->pauseButton->setEnabled(false);
         auxPlug = false;
-        device->pauseSession();
+        if(play){
+            ui->stackedWidget->setCurrentWidget(ui->page_pause);
+            device->pauseSession();
+        }
+
     }
     else{
         ui->auxLabel->setText("");
         ui->label_5->setText("Headsets ON");
-        ui->upButton->setEnabled(true);
-        ui->downButton->setEnabled(true);
-        ui->selectButton->setEnabled(true);
-        ui->playButton->setEnabled(true);
-        ui->stopButton->setEnabled(false);
-        ui->pauseButton->setEnabled(false);
         auxPlug = true;
-        device->resumeSession();
+        ui->powerButton->setEnabled(true);
+        if(play){
+            ui->menuButton->setEnabled(false);
+            ui->upButton->setEnabled(false);
+            ui->downButton->setEnabled(false);
+            ui->selectButton->setEnabled(false);
+            ui->playButton->setEnabled(false);
+            ui->stopButton->setEnabled(true);
+            ui->pauseButton->setEnabled(true);
+            ui->stackedWidget->setCurrentWidget(ui->page_2);
+            device->resumeSession();
+        }
+        else{
+            ui->menuButton->setEnabled(true);
+            ui->upButton->setEnabled(true);
+            ui->downButton->setEnabled(true);
+            ui->selectButton->setEnabled(true);
+            ui->playButton->setEnabled(true);
+            ui->stopButton->setEnabled(false);
+            ui->pauseButton->setEnabled(false);
+        }
     }
 }
 
 //Start Button:
 void MainWindow::Start()
 {
-    //enable pause button if its disable
+    //makes battery lose charge for a new session:
+    if(charging == false){
+        battery -= 5;
+        ui->batteryLabel->setText(QString::number(battery) + "%");
+    }
+    //checks if battery is low and gives user a warning
+    if(battery <= 5 && battery > 0){
+        ui->lowBatteryLabel->setText("LOW BATTERY - Please Charge!");
+    }
+    //checks if battery is dead and turns off
+    else if(battery <= 0){
+        ui->lowBatteryLabel->setText("");
+        Power();
+    }
     //passes the current date time to new session
     NewSession(ui->dateTimeEdit->dateTime());
 }
@@ -393,6 +421,8 @@ void MainWindow::Stop()
 {
     //enable start button and pause button if one was disable
     stop = true;
+    play = false;
+    pause = false;
     ui->stackedWidget->setCurrentWidget(ui->page_stop);
     ui->upButton->setEnabled(false);
     ui->downButton->setEnabled(false);
@@ -497,18 +527,15 @@ void MainWindow::MenuEnter()
 
     }
 
-    //if they are choosing to view a session on the session logs page
-    else if(ui->stackedWidget->currentWidget()->objectName() == "page_5"){
-        QModelIndex currIndex = ui->listView->currentIndex();
-        int selectedIndex = currIndex.row();
-        if(device->getNumSessions() != 0 && selectedIndex != 256){
-            PCScreen(device->getSessions()[selectedIndex]);
-        }
-    }
-
     if(ui->stackedWidget->currentWidget()->objectName() == "page_6"){
-        //qInfo("TEST GRAPH ENTER BUTTON PRESSED");
-         chooseElectrode();
+        //check to make sure a session is there to choose a electrode from
+        if(device->getNumSessions() == 0){
+            ui->noSession->setText("No Session To View From!");
+        }
+        else{
+            ui->noSession->setText("");
+            chooseElectrode();
+        }
     }
 }
 
@@ -559,13 +586,18 @@ void MainWindow::progressComplete(){
     MenuButton();
 }
 
+void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
+{
+    int selectedIndex = index.row();
+    PCScreen(device->getSessions()[selectedIndex]);
+}
+
 
 
 void MainWindow::on_listView_2_doubleClicked(const QModelIndex &index)
 {
     ui->stackedWidget->setCurrentWidget(ui->page_7);
-    QModelIndex currIndex = ui->listView_2->currentIndex();
-    int selectedIndex = currIndex.row();
+    int selectedIndex = index.row();
     updateTestUi(selectedIndex);
 }
 
