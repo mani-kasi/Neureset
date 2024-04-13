@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QStringListModel>
 #include <QDebug>
+#include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,14 +20,15 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    //reset function that will get called after session is done, just brings back device state to beginning (main menu)
-    void Reset();
-
     //menu options
     void NewSession(QDateTime const &dateTime);
 
     //pc screen
     void PCScreen(Session* session);
+
+    //graph
+    //void updateTestUi(int id);
+    void chooseElectrode();
 
 
 
@@ -41,6 +43,9 @@ private:
     Device *device;
     double timer;
     int progressValue;
+    bool pause;
+    bool stop;
+    bool play;
 
 public slots:
     //active the lights
@@ -77,6 +82,6 @@ public slots:
     void updateProgress();
     void progressComplete();
 
-
+    //void on_listView_2_doubleClicked(const QModelIndex &index);
 };
 #endif // MAINWINDOW_H

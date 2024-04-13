@@ -24,7 +24,6 @@ Device::~Device() {
 }
 
 void Device::newSession(QDateTime const &dateTime) {
-    qInfo("device new session function just called");
 
     if (numSessions+1 == MAX_SESSIONS) {
         return;
@@ -34,7 +33,7 @@ void Device::newSession(QDateTime const &dateTime) {
     for (int i = 0; i < NUM_ELECTRODES; i++) {
         electrodes.append(new Electrode());
     }
-
+    cout<<"START DATE IN NEW SESSION" + dateTime.toString("yyyy-MM-dd HH:mm:ss").toStdString()<<endl;
     curSession = new Session(nullptr, dateTime, electrodes);
 
     emit sendBlueLightSignal();
@@ -67,10 +66,8 @@ void Device::newSession(QDateTime const &dateTime) {
     saveSession();
     delay(0050);
     curSession = NULL;
-    qInfo("sent sessionLogs signal");
     emit sendBlueLightSignal();
     emit sendGreenLightSignal();
-    qInfo("PROGRESS IS DONE");
     emit updateSessionLogs();
     emit progressDone();
 }
@@ -92,29 +89,27 @@ void Device::decrementTime() {
 }
 
 void Device::pauseSession() {
-    qInfo("pauseSESSION WAS CALLED");
-    pauseTimer->start(1000);
+//    pauseTimer->start(1000);
     emit sendRedLightSignal();
     //set state to paused
 }
 
 void Device::resumeSession() {
-    qInfo("resume SESSION WAS CALLED");
-    if (pauseTimer->isActive()) {
-        pauseTimer->stop();
-    }
-    emit sendBlueLightSignal();
+//    if (pauseTimer->isActive()) {
+//        pauseTimer->stop();
+//    }
+    emit sendRedLightSignal();
 }
 
 void Device::power(bool on) {
     if (on) {
         //This is five minutes in seconds
-        contactTimer = 300;
+        //contactTimer = 300;
     }
     else {
-        for (int i = 0; i < NUM_ELECTRODES; i++) {
-            delete electrodes[i];
-        }
+//        for (int i = 0; i < NUM_ELECTRODES; i++) {
+//            delete electrodes[i];
+//        }
         //Somehow stop flow of program
     }
 }
@@ -124,8 +119,7 @@ void Device::saveSession() {
 }
 
 void Device::stopSession() {
-    delete curSession;
-    //Stop flow of program
+    //delete curSession;
 }
 
 //get for the mainwindow

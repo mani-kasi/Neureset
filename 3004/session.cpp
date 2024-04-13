@@ -6,7 +6,7 @@ Session::Session(QObject *parent, const QDateTime& startTime,  QVector<Electrode
     : QObject{parent}
 {
     this->startTime = startTime;
-    if(startTime.isValid()){
+    if(!startTime.isValid()){
         this->startTime.setDate(QDate(2024, 4, 12));
         this->startTime.setTime(QTime(7, 0));
     }
@@ -14,7 +14,7 @@ Session::Session(QObject *parent, const QDateTime& startTime,  QVector<Electrode
 }
 
 void Session::startSession(){
-    qInfo("Session started");
+    qInfo("Session started!");
     running = true;
     for(int i = 0; i<electrodes.length(); i++){
         electrodes[i]->generateBaselineData();
@@ -23,7 +23,7 @@ void Session::startSession(){
 }
 
 void Session::setOverallBaselineEnd(){
-    qInfo("Session end baseline calculated");
+    qInfo("Session end and baseline calculated!");
     overallBaselineEnd = calcOverallBaseline();
 }
 
@@ -51,22 +51,18 @@ void Session::setEndTime(const QDateTime& endTime) {
 }
 
 QDateTime Session::getStartTime()const{
-    cout<<this->startTime.toString("yyyy-MM-dd HH:mm:ss").toStdString()<<endl;
     return startTime;
 }
 QDateTime Session::getEndTime() const{
-    cout<<this->endTime.toString("yyyy-MM-dd HH:mm:ss").toStdString()<<endl;
     return endTime;
 }
 
 double Session::getOverallBaselineStart() const{
-    std::cout << std::to_string(overallBaselineStart) << std::endl;
     return overallBaselineStart;
 }
 
 
 double Session::getOverallBaselineEnd() const{
-    std::cout << std::to_string(overallBaselineEnd) << std::endl;
     return overallBaselineEnd;
 }
 
@@ -81,7 +77,6 @@ double Session::calcOverallBaseline(){
         tempSum = tempSum + electrodes[i]->getDominantFrequency();
     }
     double tempDomAvg = tempSum/electrodes.length();
-    qInfo("data:");
     cout<<tempDomAvg<<endl;
 
     return tempDomAvg;

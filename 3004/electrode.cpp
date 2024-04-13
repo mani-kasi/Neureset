@@ -65,7 +65,7 @@ void Electrode::applyTreatment() {
         // Update the dominant frequency for the next interval
         dominantFrequency = modulatedFrequency;
     }
-    std::cout << std::to_string(dominantFrequency) << std::endl;
+    //std::cout << std::to_string(dominantFrequency) << std::endl;
 
 
 }

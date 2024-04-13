@@ -33,7 +33,7 @@
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">QFrame {border: 2px solid black; background: qlineargradient(spread:pad, x1:0.762, y1:0, x2:0.51269, y2:1, stop:0 rgba(255, 241, 199, 255), stop:0.994924 rgb(220, 204, 129, 255)) }
+     <string notr="true">QFrame {border: 2px solid black; background: qlineargradient(spread:pad, x1:0.762, y1:0, x2:0.51269, y2:1, stop:0 rgba(255, 241, 199, 255), stop:0.994924 rgba(220, 204, 129, 255)) }
 </string>
     </property>
     <property name="frameShape">
@@ -92,7 +92,7 @@
      </property>
      <property name="styleSheet">
       <string notr="true">
-background-color: rgb(255, 241, 199, 255);
+background-color: rgba(255, 241, 199, 255);
 image: url(:/menu.png);</string>
      </property>
      <property name="text">
@@ -112,7 +112,7 @@ image: url(:/menu.png);</string>
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="styleSheet">
@@ -393,20 +393,142 @@ image: url(:/menu.png);</string>
         <string>Test UI</string>
        </property>
       </widget>
-      <widget class="QWidget" name="widget" native="true">
+      <widget class="QListView" name="listView_2">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>30</y>
-         <width>221</width>
+         <width>211</width>
          <height>121</height>
         </rect>
        </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page_stop">
+      <widget class="QLabel" name="label_7">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>20</y>
+         <width>171</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="styleSheet">
-        <string notr="true">border: 1px solid black;</string>
+        <string notr="true">background: transparent; border: none; ; color: Red</string>
+       </property>
+       <property name="text">
+        <string>Session Stopped!</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_8">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>60</y>
+         <width>121</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none; color: purple</string>
+       </property>
+       <property name="text">
+        <string>Aborting Session.</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_9">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>221</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none;</string>
+       </property>
+       <property name="text">
+        <string>Session is Deleting, Please Wait.</string>
        </property>
       </widget>
      </widget>
+     <widget class="QWidget" name="page_pause">
+      <widget class="QLabel" name="label_11">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>40</y>
+         <width>171</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none; ; color: Blue</string>
+       </property>
+       <property name="text">
+        <string>Session Paused!</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_12">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>80</y>
+         <width>171</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent; border: none; color: purple</string>
+       </property>
+       <property name="text">
+        <string>Click Pause to Resume.</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page_7"/>
     </widget>
     <widget class="QPushButton" name="powerButton">
      <property name="geometry">
