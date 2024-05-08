@@ -1,13 +1,6 @@
-# 3004-project
-Team Members: Mani Kasi, Kelvin To, Rohan Sreelesh, Nick Ulrich
+<h1 align="center">Neureset</h1>
+<h3> An Direct Neurofeedback EEG device simulator built with C++ and QT </h3>
 
-Team Members main responsibilities:
-Mani Kasi: UI & mainwindow Class
-Kelvin To: Session Class
-Nick Ulrich: Device Class
-Rohan Sreelesh: Electrode Class
-Everyone worked on diagrams, use case, matrix, and explaination together.
+The Neureset Neurofeedback System prototype simulates a consumer EEG device based on the LENS Neurofeedback system, designed to provide direct neurofeedback therapy. Utilizing C++ and the Qt framework, this project offers a comprehensive software simulation, including use cases, design documentation, and implementation with source code, facilitating the understanding and exploration of direct neurofeedback therapy.
 
-Whats Submitted:
-3004-group36-Final-Project.pdf - all our work excluding our code.
-3004 folder contains the code of our assignment.
+Created By Mani Kasi, Kelvin To, Nick Ulrich, and Rohan Sreelesh
