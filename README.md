@@ -3,4 +3,9 @@
 
 The Neureset Neurofeedback System prototype simulates a consumer EEG device based on the LENS Neurofeedback system, designed to provide direct neurofeedback therapy. Utilizing C++ and the Qt framework, this project offers a comprehensive software simulation, including use cases, design documentation, and implementation with source code, facilitating the understanding and exploration of direct neurofeedback therapy.
 
+## Demo:
+[![Watch the video](https://img.youtube.com/vi/CRMCAFc1koc/maxresdefault.jpg)](https://youtu.be/CRMCAFc1koc)
+
+### [Watch Demo Here](https://youtu.be/CRMCAFc1koc)
+
 Created By Mani Kasi, Kelvin To, Nick Ulrich, and Rohan Sreelesh
